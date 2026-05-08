@@ -12,7 +12,7 @@ MVP random match queue app with Elo updates.
 
 ## Run locally
 ```bash
-cd /home/runner/work/omoggle-ahh-ai-slop/omoggle-ahh-ai-slop
+cd omoggle-ahh-ai-slop
 npm install
 npm start
 ```

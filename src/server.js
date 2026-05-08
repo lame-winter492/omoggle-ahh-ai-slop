@@ -62,9 +62,13 @@ function startNextMatch() {
     return;
   }
 
-  const firstScore = Math.floor(Math.random() * 10) + 1;
-  const secondScore = Math.floor(Math.random() * 10) + 1;
-  const firstWon = firstScore >= secondScore;
+  let firstScore = Math.floor(Math.random() * 10) + 1;
+  let secondScore = Math.floor(Math.random() * 10) + 1;
+  while (firstScore === secondScore) {
+    firstScore = Math.floor(Math.random() * 10) + 1;
+    secondScore = Math.floor(Math.random() * 10) + 1;
+  }
+  const firstWon = firstScore > secondScore;
 
   const { deltaA, deltaB } = applyElo(first, second, firstWon);
   const matchId = `${Date.now()}-${firstId}-${secondId}`;
