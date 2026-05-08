@@ -64,11 +64,11 @@ function startNextMatch() {
 
   let firstScore = Math.floor(Math.random() * 10) + 1;
   let secondScore = Math.floor(Math.random() * 10) + 1;
-  let rerolls = 0;
-  while (firstScore === secondScore && rerolls < 5) {
+  let tieBreakAttempts = 0;
+  while (firstScore === secondScore && tieBreakAttempts < 5) {
     firstScore = Math.floor(Math.random() * 10) + 1;
     secondScore = Math.floor(Math.random() * 10) + 1;
-    rerolls += 1;
+    tieBreakAttempts += 1;
   }
   if (firstScore === secondScore) {
     if (Math.random() >= 0.5) {
