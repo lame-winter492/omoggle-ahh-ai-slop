@@ -8,7 +8,7 @@ import '../styles/MatchQueue.css';
  * Connects to the signaling server, joins the waiting queue, and waits for
  * the 'matched' event before calling onMatched with session info.
  */
-export default function MatchQueue({ phase, onMatched, onCancel }) {
+export default function MatchQueue({ onMatched, onCancel }) {
   const [queuePos, setQueuePos] = useState(null);
   const [dots, setDots] = useState('');
 
@@ -40,9 +40,7 @@ export default function MatchQueue({ phase, onMatched, onCancel }) {
   return (
     <div className="match-queue">
       <div className="spinner" aria-label="Searching for match" />
-      <p className="queue-text">
-        {phase === 'queuing' ? `Finding a match${dots}` : 'Matched!'}
-      </p>
+      <p className="queue-text">Finding a match{dots}</p>
       {queuePos !== null && (
         <p className="queue-pos">Users in queue: {queuePos}</p>
       )}

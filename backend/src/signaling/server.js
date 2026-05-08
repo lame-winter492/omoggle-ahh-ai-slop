@@ -54,7 +54,7 @@ function initSignalingServer(httpServer) {
       const peer = findMatch(socket.id);
       if (!peer) return; // still waiting
 
-      const sessionRecord = await createSession(null, null); // user UUIDs resolved later
+      const sessionRecord = await createSession(null, null); // user UUID linking is a planned future enhancement
       const sessionId = sessionRecord ? sessionRecord.id : null;
 
       // Remember the pairing

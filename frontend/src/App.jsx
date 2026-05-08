@@ -43,10 +43,8 @@ export default function App() {
           </div>
         )}
 
-        {(phase === 'queuing' || phase === 'chatting') && (
+        {phase === 'queuing' && (
           <MatchQueue
-            phase={phase}
-            sessionInfo={sessionInfo}
             onMatched={handleMatched}
             onCancel={handleEndChat}
           />

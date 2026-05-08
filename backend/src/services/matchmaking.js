@@ -30,11 +30,15 @@ function dequeue(socketId) {
 }
 
 /**
- * Try to find a match for the given socket. Returns the matched peer or null.
+ * Try to find a match for the given socket. The caller must already be in the
+ * queue (via enqueue). Returns the matched peer or null.
  * @param {string} socketId
  * @returns {{ socketId: string, userId: string|null } | null}
  */
 function findMatch(socketId) {
+  // The caller must be in the queue to participate in a match
+  if (!waitingQueue.some((u) => u.socketId === socketId)) return null;
+
   const peer = waitingQueue.find((u) => u.socketId !== socketId);
   if (!peer) return null;
 

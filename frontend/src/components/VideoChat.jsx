@@ -67,8 +67,10 @@ export default function VideoChat({ sessionInfo, onEnd }) {
           if (from !== peerId) return;
           try {
             await pc.addIceCandidate(new RTCIceCandidate(candidate));
-          } catch (_) {
-            // ignore stale candidates
+          } catch (err) {
+            // Stale or invalid ICE candidates can be safely ignored; log at
+            // debug level to aid troubleshooting without cluttering the console.
+            console.debug('[webrtc] addIceCandidate skipped:', err.message);
           }
         });
 
