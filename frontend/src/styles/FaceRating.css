@@ -1,0 +1,51 @@
+/* ── Face rating panel ─────────────────────────────────────────────────────── */
+.face-rating {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.rating-title { font-size: 1rem; font-weight: 600; }
+.score { color: var(--accent); font-size: 1.25rem; }
+
+.breakdown {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.breakdown li {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  align-items: center;
+  gap: .5rem;
+  font-size: .85rem;
+}
+
+.breakdown-label { color: var(--muted); text-transform: capitalize; }
+.breakdown-val   { text-align: right; color: var(--text); }
+
+.bar-track {
+  background: var(--border);
+  border-radius: 99px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+
+.rating-note {
+  font-size: .75rem;
+  color: var(--muted);
+  font-style: italic;
+}
