@@ -32,4 +32,8 @@ Server starts on `http://0.0.0.0:3000`.
 
 ## Notes
 - This is a base MVP. It does **not** include production moderation, authentication, persistence, or real video chat yet.
-- The score analysis is a gameplay placeholder and should be replaced with a fair and safe scoring system before production use.
+- The score analysis is a gameplay placeholder and should be replaced with a production system that is:
+  - privacy-preserving (clear consent + minimal retention),
+  - unbiased/validated across demographics,
+  - transparent and appealable (users can challenge outcomes),
+  - protected by moderation and abuse safeguards.

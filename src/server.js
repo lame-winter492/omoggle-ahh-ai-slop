@@ -20,12 +20,12 @@ function expectedScore(playerA, playerB) {
   return 1 / (1 + 10 ** ((playerB.elo - playerA.elo) / 400));
 }
 
-function applyElo(playerA, playerB, aWon) {
+function applyElo(playerA, playerB, outcomeA) {
   const expectedA = expectedScore(playerA, playerB);
   const expectedB = expectedScore(playerB, playerA);
 
-  const actualA = aWon ? 1 : 0;
-  const actualB = aWon ? 0 : 1;
+  const actualA = outcomeA;
+  const actualB = 1 - outcomeA;
 
   const nextA = Math.round(playerA.elo + kFactor * (actualA - expectedA));
   const nextB = Math.round(playerB.elo + kFactor * (actualB - expectedB));
@@ -64,13 +64,25 @@ function startNextMatch() {
 
   let firstScore = Math.floor(Math.random() * 10) + 1;
   let secondScore = Math.floor(Math.random() * 10) + 1;
-  while (firstScore === secondScore) {
+  let rerolls = 0;
+  while (firstScore === secondScore && rerolls < 5) {
     firstScore = Math.floor(Math.random() * 10) + 1;
     secondScore = Math.floor(Math.random() * 10) + 1;
+    rerolls += 1;
+  }
+  if (firstScore === secondScore) {
+    if (Math.random() >= 0.5) {
+      if (firstScore < 10) firstScore += 1;
+      else secondScore -= 1;
+    } else {
+      if (secondScore < 10) secondScore += 1;
+      else firstScore -= 1;
+    }
   }
   const firstWon = firstScore > secondScore;
+  const firstOutcome = firstWon ? 1 : 0;
 
-  const { deltaA, deltaB } = applyElo(first, second, firstWon);
+  const { deltaA, deltaB } = applyElo(first, second, firstOutcome);
   const matchId = `${Date.now()}-${firstId}-${secondId}`;
 
   io.to(firstId).emit("match_result", {
