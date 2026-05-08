@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Omoggle Elo Queue Demo</title>
+    <style>
+      :root { color-scheme: dark; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 20px; background: #0f172a; color: #e2e8f0; }
+      .card { max-width: 720px; margin: 0 auto; background: #1e293b; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+      h1 { margin-top: 0; }
+      .row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+      input, button { border: none; border-radius: 8px; padding: 10px 12px; font-size: 16px; }
+      input { min-width: 220px; background: #334155; color: white; }
+      button { background: #38bdf8; color: #082f49; font-weight: 700; cursor: pointer; }
+      button.secondary { background: #64748b; color: #f8fafc; }
+      button:disabled { opacity: .6; cursor: not-allowed; }
+      .stat { background: #334155; border-radius: 8px; padding: 10px; min-width: 150px; }
+      #results { list-style: none; padding: 0; margin: 8px 0 0; }
+      #results li { padding: 10px; border-radius: 8px; background: #334155; margin-bottom: 8px; }
+      .win { border-left: 4px solid #22c55e; }
+      .loss { border-left: 4px solid #ef4444; }
+      .muted { color: #94a3b8; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Omoggle Match + Elo (MVP)</h1>
+      <p class="muted">This demo uses random score analysis placeholders (1–10) and Elo updates after each match.</p>
+
+      <div class="row">
+        <input id="name" maxlength="24" placeholder="Choose a nickname" />
+        <button id="save">Save name</button>
+      </div>
+
+      <div class="row">
+        <button id="queue">Join queue</button>
+        <button id="leave" class="secondary" disabled>Leave queue</button>
+      </div>
+
+      <div class="row">
+        <div class="stat">Status: <strong id="status">Connecting…</strong></div>
+        <div class="stat">Your Elo: <strong id="elo">-</strong></div>
+      </div>
+
+      <h3>Recent matches</h3>
+      <ul id="results"></ul>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const statusEl = document.getElementById("status");
+      const eloEl = document.getElementById("elo");
+      const resultsEl = document.getElementById("results");
+      const queueBtn = document.getElementById("queue");
+      const leaveBtn = document.getElementById("leave");
+      const saveBtn = document.getElementById("save");
+      const nameInput = document.getElementById("name");
+
+      let queued = false;
+
+      function setQueued(value) {
+        queued = value;
+        queueBtn.disabled = queued;
+        leaveBtn.disabled = !queued;
+        if (queued) statusEl.textContent = "In queue";
+      }
+
+      saveBtn.addEventListener("click", () => {
+        socket.emit("register", { name: nameInput.value });
+      });
+
+      queueBtn.addEventListener("click", () => {
+        socket.emit("join_queue");
+        setQueued(true);
+      });
+
+      leaveBtn.addEventListener("click", () => {
+        socket.emit("leave_queue");
+        setQueued(false);
+        statusEl.textContent = "Idle";
+      });
+
+      socket.on("connected", ({ elo }) => {
+        statusEl.textContent = "Idle";
+        eloEl.textContent = elo;
+      });
+
+      socket.on("profile", ({ name, elo }) => {
+        nameInput.value = name;
+        eloEl.textContent = elo;
+      });
+
+      socket.on("queue_status", ({ queued: state }) => {
+        setQueued(Boolean(state));
+        if (!state) statusEl.textContent = "Idle";
+      });
+
+      socket.on("match_result", (result) => {
+        setQueued(false);
+        statusEl.textContent = "Match complete";
+        eloEl.textContent = result.you.elo;
+
+        const item = document.createElement("li");
+        const won = result.winner === "you";
+        item.className = won ? "win" : "loss";
+        item.textContent = `${won ? "Win" : "Loss"} vs ${result.opponent} | Score ${result.you.score}-${result.opponentData.score} | Elo ${result.you.delta >= 0 ? "+" : ""}${result.you.delta} => ${result.you.elo}`;
+
+        resultsEl.prepend(item);
+        while (resultsEl.children.length > 10) {
+          resultsEl.removeChild(resultsEl.lastChild);
+        }
+      });
+
+      socket.on("connect_error", () => {
+        statusEl.textContent = "Connection error";
+      });
+    </script>
+  </body>
+</html>
